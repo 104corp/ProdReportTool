@@ -19,20 +19,6 @@ tags:  104se, web, 2024, application-review
 
 https://github.com/104corp/k8s-gitops-infra-rancher/blob/main/apps/config/overlays/prod-env/prod-cluster/networking.k8s.io/networkpolicies/p-104se-$app/networkpolicy.yaml
 
-## 系統資源狀況
-以下是 30 天的數字。
-> [監控數據](https://grafana.apps.k8s.104dc.com/k8s/clusters/c-m-vpjqbm2z/api/v1/namespaces/cattle-monitoring-system/services/http:rancher-monitoring-grafana:80/proxy/d/a164a7f0339f99e89cea5cb47e9be617/kubernetes-compute-resources-workload?orgId=1&from=now-7d&to=now&var-datasource=Prometheus&var-cluster=&var-namespace=p-104se-$app&var-type=deployment&var-workload=prod-prod-$app-web)
-
-$cpu_output
-
-$memory_output
-
-## Request 處理狀況
-
-以下是 7 天的數字。
-
-> [監控數據](https://grafana.apps.k8s.104dc.com/k8s/clusters/c-m-vpjqbm2z/api/v1/namespaces/cattle-monitoring-system/services/http:rancher-monitoring-grafana:80/proxy/d/4GFbkOsZk/nginx-request-handling-performance?orgId=1&refresh=30s&var-datasource=Prometheus&var-ingress=prod-prod-$app-web&from=now-7d&to=now)
-
 ### ingress 流量
 
 
