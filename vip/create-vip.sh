@@ -2,29 +2,19 @@
 
 apps=(
 "commodity-ad-period"
-"commodity-ad-period-new"
-"commodity-corp-images-new"
 "commodity-corporate-images"
 "commodity-focus"
-"commodity-focus-new"
 "commodity-job-sort"
-"commodity-job-sort-new"
 "commodity-pick-up"
 "commodity-pick-up-c"
-"commodity-pick-up-new"
 "commodity-platinum"
-"commodity-platinum-new"
 "erp"
-"erp-new"
 "hunter-job-points"
 "hunter-resume-points"
 "hunter-resume-points-lab2"
-"hunter-resume-points-new"
 "managerphp-faq"
 "orders"
-"orders-new"
 "plans"
-"plans-new"
 "queue-ats-mail"
 "queue-ats-notify"
 "queue-commodity-ad-period"
@@ -49,7 +39,6 @@ apps=(
 "vip-job"
 "vipadmin"
 "weborder"
-"weborder-new"
 )
 
 printed_cpu=false
