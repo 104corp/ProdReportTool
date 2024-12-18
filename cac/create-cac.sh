@@ -1,17 +1,17 @@
 #!/bin/bash
 
 apps=(
-"plantuml-server-tomcat"
-"managerphp"
-"m104-facade"
-"jira-report"
-"intra-vip"
-"intra-video"
-"intra-m104"
-"hackmd"
-"appapi-vip"
-"appapi-pro"
-"ap-monitor"
+  "plantuml-server-tomcat"
+  "managerphp"
+  "m104-facade"
+  "jira-report"
+  "intra-vip"
+  "intra-video"
+  "intra-m104"
+  "hackmd"
+  "appapi-vip"
+  "appapi-pro"
+  "ap-monitor"
 )
 
 printed_cpu=false
@@ -39,7 +39,7 @@ for app in "${apps[@]}"; do
   else
     echo "No valid data found for $app"
   fi
-  echo ""  # 插入空行分隔 CPU 和記憶體
+  echo ""
 
   export memory_output=$(curl -s "http://prom.apps.k8s.104dc.com/api/v1/query?query=sum(container_memory_working_set_bytes%7Bnamespace%3D%22p-104cac-$app%22%7D%20*%20on(namespace%2Cpod)%20group_left(workload%2Cworkload_type)%20namespace_workload_pod%3Akube_pod_owner%3Arelabel%7Bnamespace%3D%22p-104cac-$app%22%2Cworkload%3D%22prod-prod-$app-web%22%2Cworkload_type%3D%22deployment%22%7D)%20by%20(pod)%20%2F%20sum(kube_pod_container_resource_limits%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D%22p-104cac-$app%22%2Cresource%3D%22memory%22%7D%20*%20on(namespace%2Cpod)%20group_left(workload%2Cworkload_type)%20namespace_workload_pod%3Akube_pod_owner%3Arelabel%7Bnamespace%3D%22p-104cac-$app%22%2Cworkload%3D%22prod-prod-$app-web%22%2Cworkload_type%3D%22deployment%22%7D)%20by%20(pod)" -Lk | \
   jq -r '.data.result[] | "\(.metric.pod) | \(.value[1] | tonumber * 100 | . * 100 | floor / 100)"' | \
@@ -51,7 +51,7 @@ for app in "${apps[@]}"; do
     fi
 
     memory=${memory:-0}
-    # 打印表格行
+
     echo "| $pod | $memory(%) |"
   done
   )
@@ -60,7 +60,7 @@ for app in "${apps[@]}"; do
   else
     echo "No valid data found for $app"
   fi
-  echo ""  # 插入空行分隔 CPU 和記憶體
+  echo ""
   printed_cpu=false
   printed_memory=false
   export count=$(curl -s "http://prom.apps.k8s.104dc.com/api/v1/query?query=sum(increase(nginx_ingress_controller_requests%7Bcontroller_namespace%3D%22ingress-nginx%22%2Cexported_service%3D%22prod-prod-$app-web%22%7D%5B1d%5D))%20by%20(ingress)" -Lk | jq '.data.result[].value[1] | tonumber | floor')
