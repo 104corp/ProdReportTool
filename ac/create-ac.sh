@@ -1,17 +1,38 @@
 #!/bin/bash
 
 apps=(
-  "ac-api"
-  "bsignin"
-  "b-hydra"
-  "queue"
-  "schedule"
+  "app=ac-api ns=p-ac-ac-api domain=acapi.104dc.com"
+  "app=bsignin ns=p-ac-bsignin domain=api.bsignin.104.com.tw"
+  "app=b-hydra ns=p-ac-b-hydra domain=boidc.104.com.tw"
+  "app=queue ns=p-ac-queue domain=unknown"
+  "app=schedule ns=p-ac-schedule domain=unknown"
 )
+
+title="應用程式12月運行評估報告"
+create_time=$(date --iso-8601=seconds)
+export title
+export create_time
+
 printed_cpu=false
 printed_memory=false
 
-for app in "${apps[@]}"; do
-  export app
+for item in "${apps[@]}"; do
+  for pair in $item; do
+    key=${pair%=*}
+    value=${pair#*=}
+
+    if [[ $key == "domain" ]]; then
+      domain=$value
+      export domain
+    elif [[ $key == "ns" ]]; then
+      ns=$value
+      export ns
+    else
+      app=$value
+      export app
+    fi
+  done
+
   echo -e "\n## 應用名稱: $app"
   cpu_output=""
   export cpu_output=$(curl -s "http://prom.apps.k8s.104dc.com/api/v1/query?query=sum(node_namespace_pod_container%3Acontainer_cpu_usage_seconds_total%3Asum_irate%7Bnamespace%3D%22p-ac-$app%22%7D%20*%20on(namespace%2Cpod)%20group_left(workload%2Cworkload_type)%20namespace_workload_pod%3Akube_pod_owner%3Arelabel%7Bnamespace%3D%22p-ac-$app%22%2Cworkload%3D%22prod-prod-$app-web%22%2Cworkload_type%3D%22deployment%22%7D)%20by%20(pod)%20%2F%20sum(kube_pod_container_resource_limits%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D%22p-ac-$app%22%2Cresource%3D%22cpu%22%7D%20*%20on(namespace%2Cpod)%20group_left(workload%2Cworkload_type)%20namespace_workload_pod%3Akube_pod_owner%3Arelabel%7Bnamespace%3D%22p-ac-$app%22%2Cworkload%3D%22prod-prod-$app-web%22%2Cworkload_type%3D%22deployment%22%7D)%20by%20(pod)" -Lk | \
@@ -60,5 +81,5 @@ for app in "${apps[@]}"; do
   curl -X POST "https://api.hackmd.io/v1/teams/104ContainerizationProject/notes" \
        -H "Authorization: Bearer 1EY2Y4U8SE637U1AFHCV3L9QHP6P7CDTHPKYNI6JRHJ1D7RA5B" \
        -H "Content-Type: application/json" \
-       -d "{\"title\": \"$app 應用程式十月運行評估報告\", \"content\": $content}"
+       -d "{\"title\": \"$app $title\", \"content\": $content}"
 done
