@@ -21,16 +21,11 @@ for item in "${apps[@]}"; do
     key=${pair%=*}
     value=${pair#*=}
 
-    if [[ $key == "domain" ]]; then
-      domain=$value
-      export domain
-    elif [[ $key == "ns" ]]; then
-      ns=$value
-      export ns
-    else
-      app=$value
-      export app
-    fi
+    case $key in
+      "domain") export domain=$value ;;
+      "ns") export ns=$value ;;
+      *) export app=$value ;;
+    esac
   done
 
   echo -e "\n## 應用名稱: $app"
