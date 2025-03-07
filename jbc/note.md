@@ -1,11 +1,11 @@
 ---
 robots: noindex, nofollow
-tags:  104jbc, web, 2024, application-review
+tags:  104jbc, web, 2025, application-review
 ---
 
-# $app 應用程式十一月運行評估報告
+# $app $title
 
-> 撰文時間：Nov 22, 2024
+> 撰文時間：$create_time
 
 > 作者：K8s 團隊
 

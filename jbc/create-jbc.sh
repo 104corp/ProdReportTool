@@ -1,8 +1,27 @@
 #!/bin/bash
 
-apps=("apply-service" "job-notify-service" "job-service" "mail-service" "message-api" "resume-service-c" "snapshot-service" "tag-service" "www")
+apps=(
+"apply-service" 
+"job-notify-service" 
+"job-service" 
+"mail-service" 
+"message-api" 
+"resume-service-c" 
+"snapshot-service" 
+"tag-service" 
+"www" 
+"freshman" 
+"pda" 
+"personal-recommend-service" 
+"redirect-service"
+)
+###apps=("bc-comm-service" "follow-company-service" "resume-template-service" "save-company-service")
 printed_cpu=false
 printed_memory=false
+title="應用程式二月運行評估報告"
+create_time=$(date +"%b %d, %Y")
+export title
+export create_time
 
 for app in "${apps[@]}"; do
   export app
@@ -64,5 +83,5 @@ for app in "${apps[@]}"; do
   curl -X POST "https://api.hackmd.io/v1/teams/104ContainerizationProject/notes" \
        -H "Authorization: Bearer 1EY2Y4U8SE637U1AFHCV3L9QHP6P7CDTHPKYNI6JRHJ1D7RA5B" \
        -H "Content-Type: application/json" \
-       -d "{\"title\": \"$app 應用程式十一月運行評估報告\", \"content\": $content}"
+       -d "{\"title\": \"$app $title\", \"content\": $content}"
 done
