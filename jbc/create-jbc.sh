@@ -1,24 +1,32 @@
 #!/bin/bash
 
 apps=(
+"admin-dashboard"
 "apply-service" 
+"follow-company-service"
+"freshman" 
 "job-notify-service" 
 "job-service" 
-"mail-service" 
 "message-api" 
-"resume-service-c" 
-"snapshot-service" 
-"tag-service" 
-"www" 
-"freshman" 
 "pda" 
 "personal-recommend-service" 
 "redirect-service"
+"resume-template-service"
+"snapshot-service" 
+"tag-service" 
+"www" 
 )
-###apps=("bc-comm-service" "follow-company-service" "resume-template-service" "save-company-service")
+## workload 無 web
+#bc-comm-service
+#mail-service
+#match-service
+#monitor-c
+#resume-service-c
+#save-company-service 
+
 printed_cpu=false
 printed_memory=false
-title="應用程式二月運行評估報告"
+title="應用程式三月運行評估報告"
 create_time=$(date +"%b %d, %Y")
 export title
 export create_time
@@ -52,7 +60,7 @@ for app in "${apps[@]}"; do
   echo ""  # 插入空行分隔 CPU 和記憶體
 
   # 使用 curl 查詢 Prometheus 並取得每個應用下每個 Pod 的記憶體使用百分比
-  export memory_output=$(curl -s "http://prom.apps.k8s.104dc.com/api/v1/query?query=sum(container_memory_working_set_bytes%7Bnamespace%3D%22p-104jbc-$app%22%7D%20*%20on(namespace%2Cpod)%20group_left(workload%2Cworkload_type)%20namespace_workload_pod%3Akube_pod_owner%3Arelabel%7Bnamespace%3D%22p-104jbc-$app%22%2Cworkload%3D%22prod-prod-$app-web%22%2Cworkload_type%3D%22deployment%22%7D)%20by%20(pod)%20%2F%20sum(kube_pod_container_resource_limits%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D%22p-104jbc-$app%22%2Cresource%3D%22memory%22%7D%20*%20on(namespace%2Cpod)%20group_left(workload%2Cworkload_type)%20namespace_workload_pod%3Akube_pod_owner%3Arelabel%7Bnamespace%3D%22p-104jbc-$app%22%2Cworkload%3D%22prod-prod-$app-web%22%2Cworkload_type%3D%22deployment%22%7D)%20by%20(pod)" -Lk | \
+  export memory_output=$(curl -s "http://prom.apps.k8s.104dc.com/api/v1/query?query=sum(container_memory_working_set_bytes%7Bnamespace%3D%22p-104jbc-$app%22%2Ccontainer!%3D%22%22%2Cimage!%3D%22%22%7D%20*%20on(namespace%2Cpod)%20group_left(workload%2Cworkload_type)%20namespace_workload_pod%3Akube_pod_owner%3Arelabel%7Bnamespace%3D%22p-104jbc-$app%22%2Cworkload%3D%22prod-prod-$app-web%22%2Cworkload_type%3D%22deployment%22%7D)%20by%20(pod)%20%2F%20sum(kube_pod_container_resource_limits%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D%22p-104jbc-$app%22%2Cresource%3D%22memory%22%7D%20*%20on(namespace%2Cpod)%20group_left(workload%2Cworkload_type)%20namespace_workload_pod%3Akube_pod_owner%3Arelabel%7Bnamespace%3D%22p-104jbc-$app%22%2Cworkload%3D%22prod-prod-$app-web%22%2Cworkload_type%3D%22deployment%22%7D)%20by%20(pod)" -Lk | \
   jq -r '.data.result[] | "\(.metric.pod) | \(.value[1] | tonumber * 100 | . * 100 | floor / 100)"' | \
   while IFS=" | " read -r pod memory; do
     # 第一次打印 Markdown 表格的標題
@@ -80,8 +88,8 @@ for app in "${apps[@]}"; do
   export count=$(curl -s "http://prom.apps.k8s.104dc.com/api/v1/query?query=sum(increase(nginx_ingress_controller_requests%7Bcontroller_namespace%3D%22ingress-nginx%22%2Cexported_service%3D%22prod-prod-$app-web%22%7D%5B1d%5D))%20by%20(ingress)" -Lk | jq '.data.result[].value[1] | tonumber | floor')
   echo $count
   content=$(envsubst < note.md | jq -Rs .)
-  curl -X POST "https://api.hackmd.io/v1/teams/104ContainerizationProject/notes" \
-       -H "Authorization: Bearer 1EY2Y4U8SE637U1AFHCV3L9QHP6P7CDTHPKYNI6JRHJ1D7RA5B" \
-       -H "Content-Type: application/json" \
-       -d "{\"title\": \"$app $title\", \"content\": $content}"
+  #curl -X POST "https://api.hackmd.io/v1/teams/104ContainerizationProject/notes" \
+  #     -H "Authorization: Bearer 1EY2Y4U8SE637U1AFHCV3L9QHP6P7CDTHPKYNI6JRHJ1D7RA5B" \
+  #     -H "Content-Type: application/json" \
+  #     -d "{\"title\": \"$app $title\", \"content\": $content}"
 done
