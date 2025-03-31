@@ -88,8 +88,8 @@ for app in "${apps[@]}"; do
   export count=$(curl -s "http://prom.apps.k8s.104dc.com/api/v1/query?query=sum(increase(nginx_ingress_controller_requests%7Bcontroller_namespace%3D%22ingress-nginx%22%2Cexported_service%3D%22prod-prod-$app-web%22%7D%5B1d%5D))%20by%20(ingress)" -Lk | jq '.data.result[].value[1] | tonumber | floor')
   echo $count
   content=$(envsubst < note.md | jq -Rs .)
-  #curl -X POST "https://api.hackmd.io/v1/teams/104ContainerizationProject/notes" \
-  #     -H "Authorization: Bearer 1EY2Y4U8SE637U1AFHCV3L9QHP6P7CDTHPKYNI6JRHJ1D7RA5B" \
-  #     -H "Content-Type: application/json" \
-  #     -d "{\"title\": \"$app $title\", \"content\": $content}"
+  curl -X POST "https://api.hackmd.io/v1/teams/104ContainerizationProject/notes" \
+       -H "Authorization: Bearer 1EY2Y4U8SE637U1AFHCV3L9QHP6P7CDTHPKYNI6JRHJ1D7RA5B" \
+       -H "Content-Type: application/json" \
+       -d "{\"title\": \"$app $title\", \"content\": $content}"
 done
