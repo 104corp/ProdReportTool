@@ -8,7 +8,7 @@ apps=(
 #  "app=schedule ns=p-ac-schedule domain=unknown"
 )
 
-title="應用程式 3月運行評估報告"
+title="應用程式 5月運行評估報告"
 ## For Linux
 # create_time=$(date --iso-8601=seconds)
 ## For MacOS
@@ -36,6 +36,9 @@ for item in "${apps[@]}"; do
   IFS=',' read -ra reg_list <<< "${region}"
 
   echo -e "\n## 應用名稱: $app"
+  cpu_output=""
+  memory_output=""
+  ingress_output=""
 
   for reg in "${reg_list[@]}"; do
     case "$reg" in
