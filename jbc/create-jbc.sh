@@ -26,7 +26,7 @@ apps=(
 
 printed_cpu=false
 printed_memory=false
-title="應用程式三月運行評估報告"
+title="應用程式五月運行評估報告"
 create_time=$(date +"%b %d, %Y")
 export title
 export create_time
